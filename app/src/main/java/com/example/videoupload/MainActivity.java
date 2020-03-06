@@ -12,9 +12,12 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -23,10 +26,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button buttonUpload;
     private TextView textView;
     private TextView textViewResponse;
-
+    String ser;
     private static final int SELECT_VIDEO = 3;
 
     private String selectedPath;
+    VideoView videov;
+    MediaController mediac;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         buttonChoose.setOnClickListener(this);
         buttonUpload.setOnClickListener(this);
+
+        videov = (VideoView) findViewById(R.id.videoView);
+        mediac = new MediaController(this);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                videoplay();
+            }
+        });
     }
 
     private void chooseVideo() {
@@ -95,8 +110,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 uploading.dismiss();
+                ser=s;
                 textViewResponse.setText(Html.fromHtml("<b>Uploaded at <a href='" + s + "'>" + s + "</a></b>"));
                 textViewResponse.setMovementMethod(LinkMovementMethod.getInstance());
+
+                Uri uri = Uri.parse(s);
+                videov.setVideoURI(uri);
+                videov.setMediaController(mediac);
+                mediac.setAnchorView(videov);
+                videov.start();
             }
 
             @Override
@@ -110,6 +132,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         uv.execute();
     }
 
+    public void videoplay()
+    {
+
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -120,4 +147,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             uploadVideo();
         }
     }
-}
+
+    }
